@@ -1,13 +1,24 @@
 # XDR for Stellar developers
 
-This tutorial introduces XDR which is a standard data serialization
-format, for uses such as computer network protocols. It allows data to
-be transferred between different kinds of computer systems. Converting
-from the local representation to XDR is called encoding. Converting
-from XDR to the local representation is called decoding. XDR is
-implemented as a software library of functions which is portable
-between different operating systems and is also independent of the
-transport layer.
+This article offers an introduction to XDR, which is a standard for
+describing and encoding data. The goal of this article is to explore
+the standard while recreating the golang library step by step. Any
+kind of developer can benefit from reading this article, but it will
+be oriented towards Stellar developers. By the end of the article,
+you'll be familiar with XDR, the golang XDR library and understand how
+XDR is used in the Stellar protocol (ecosystem)?.
+
+XDR uses a language to describe data formats.  The language can only
+be used only to describe data; it is not a programming language.
+
+The XDR standard makes the following assumption: that bytes (or
+octets) are portable, where a byte is defined to be 8 bits of data.
+
+A given hardware device should encode the bytes onto the various
+media in such a way that other hardware devices may decode the bytes
+without loss of meaning.  For example, the Ethernet* standard
+suggests that bytes be encoded in "little-endian" style [2], or least
+significant bit first.
 
 ## The Spec
 
