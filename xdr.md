@@ -10,6 +10,7 @@ between different operating systems and is also independent of the
 transport layer.
 
 ## The Spec
+
 ## Reimplementing go-xdr
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
