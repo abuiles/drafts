@@ -11,13 +11,13 @@ how `XDR` is used in the Stellar protocol (ecosystem)?.
 ## History
 
 Chances are you have never heard of `XDR` and you might even be
-surprised that there is something different than `JSON` to send
+surprised that there is something different from `JSON` to send
 messages between computers!
 
 While `JSON` is today the predominant data format for sending messages
-in the web, before that, there was `XML` (do not confuse with `XLM`)
-and even before that, people were using other formats to send messages
-between machines.
+around the web, before that, there was `XML` (do not confuse with
+`XLM`) and even before that, people were using other formats to send
+messages between machines.
 
 When you are sending messages, you need a way to describe the
 information you are sending. Without any context, what are you
@@ -33,9 +33,9 @@ of that data, this format was called External Data Representation
 Standard or `XDR`.
 
 Following the `XDR` spec, the `bytes` above represent the string
-`hello world`, where the first `4 bytes` tells you the size of the
-string (`11`) and the following bytes are the unicode representantion
-of the string.
+`hello world`, where the first `4 bytes` tells you the number of
+`bytes` that a string might contain (`11` in this case), and the the
+rest are the UTF-8 bytes representantion of the string. [^1]
 
 XDR is used by a variety of systems like Stellar Payment Network, ZFS
 File System and The SpiderMonkey JavaScript engine.
@@ -127,3 +127,8 @@ aliquip ex ea commodo consequat. Duis aute irure dolor in
 reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
 pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
 culpa qui officia deserunt mollit anim id est laborum.
+
+
+## Footnotes
+
+- [^1] The spec talks about ASCII bytes but current implementations use UTF-8 which has replaced ASCII.
