@@ -42,11 +42,34 @@ File System and The SpiderMonkey JavaScript engine.
 
 `XDR` can be compared to Google's [protocol buffers](https://developers.google.com/protocol-buffers/).
 
-In the following chapters you'll learn why Stellar picked up `XDR`,
-you'll see a visual representation of an XDR structure, learn about
-the basic data types and then explore each data type while playing
-with the golang library.
+In the following chapters you'll see a visual representation of an XDR
+structure, learn about the basic data types and then explore each data
+type while playing with the golang library.
 
+## Stellar and XDR
+
+>XDR, also known as External Data Representation, is used throughout
+>the Stellar network and protocol. The ledger, transactions, results,
+>history, and even the messages passed between computers running
+>stellar-core are encoded using XDR.
+>-https://www.stellar.org/developers/guides/concepts/xdr.html
+
+You can develop applications on top of Stellar without worrying about
+how XDR works, the SDKs includes helpers to help you interact with the
+network and convert data back and forth in XDR.
+
+The page where the the quote above was taken, list some reasons on why XDR was chosen, like:
+
+ - It is very compact, so it can be transmitted quickly and stored with minimal disk space.
+ - Data encoded in XDR is reliably and predictably stored. Fields are always in the same order, which makes cryptographically signing and verifying XDR messages simple.
+ - XDR definitions include rich descriptions of data types and structures, which is not possible in simpler formats like JSON, TOML, or YAML.
+
+Nicolas Barry also expands on the subject in the following stack
+ overflow question where someone asked ["Why did the project settle on
+ XDR for external data
+ serialisation?"](https://stellar.stackexchange.com/a/284/1066). It
+ mentions similar points, but adds emphasis on the extra security
+ added by using the protocol, specifically as the protocol evolves.
 
 ## Representing data with XDR
 
