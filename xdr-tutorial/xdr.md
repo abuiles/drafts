@@ -1,46 +1,44 @@
 # XDR for Stellar developers
 
-This article offers an introduction to `XDR`, which is a standard for
-describing and encoding data. The goal of this article is to explore
-the standard while analyzing how the XDR golang library works. Any
-kind of developer can benefit from reading this article, but it will
-be oriented towards Stellar developers. By the end of the article,
-you'll be familiar with `XDR`, the golang `XDR` library and understand
-how `XDR` is used in the Stellar ecosystem.
+This article offers an introduction to XDR, which is a standard for
+describing and encoding data. Any kind of developer can benefit from
+reading this article, but it will be oriented towards Stellar
+developers. By the end of the article, you'll be familiar with XDR,
+the golang XDR library and understand how XDR is used in the
+Stellar ecosystem.
 
 ## History
 
 While `JSON` is today the predominant data format for sending messages
-around the web, before that, there was `XML` (do not confuse with
-`XLM`) and even before that, people were using other formats to send
-messages between machines.
+around the web, before that, there was `XML` and even before that,
+people were using other formats to send messages between machines.
 
 When you are sending messages, you need a way to describe the
 information you are sending. Without any context, what are you
 supposed to do if you receive a message with the following bytes?
 
-```golang Sequence of bytes in hex format
-bytes := [0x0, 0x0, 0x0, 0xb, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x0]
+```golang Sequence of bytes represented in decimal
+[0 0 0 11 104 101 108 108 111 32 119 111 114 108 100]
 ```
 
 In the mid 1980s Sun Microsystems came up with a proposal which would
 allow you not only to send data in `bytes` but also describe the shape
 of that data, this format was called External Data Representation
-Standard or `XDR`. [^1]
+Standard or XDR. [^1]
 
-Following the `XDR` spec, the `bytes` above represent the string
+Following the XDR spec, the `bytes` above represent the string
 `hello world`, where the first `4 bytes` tells you the number of
-`bytes` the string contains (`11` in this case), and the the
+`bytes` in the string (`11` in this case), and the the
 rest are the UTF-8 `bytes` representantion of the string. [^2]
 
 XDR is used by a variety of systems like Stellar Payment Network, ZFS
 File System and The SpiderMonkey JavaScript engine.
 
-`XDR` can be compared to Google's [protocol buffers](https://developers.google.com/protocol-buffers/).
+XDR can be compared to Google's [protocol buffers](https://developers.google.com/protocol-buffers/).
 
-In the following chapters you'll see a visual representation of an XDR
-structure, learn about the basic data types and then explore each data
-type while playing with the golang library.
+In the following sections you'll learn about the relationship between
+XDR and Stellar, the basic data types and then explore each data type
+while playing with the golang library.
 
 ## Stellar and XDR
 
@@ -50,9 +48,10 @@ type while playing with the golang library.
 >stellar-core are encoded using XDR.
 >-https://www.stellar.org/developers/guides/concepts/xdr.html
 
-You can develop applications on top of Stellar without worrying about
-how XDR works, the SDKs includes helpers to help you interact with the
-network and convert data back and forth in XDR.
+Stellar encodes all its messages using XDR, but you can develop
+applications on top of Stellar without worrying about how XDR works,
+the SDKs help you interact with the network and convert data back and
+forth in XDR format.
 
 The Stellar's guides list some reasons on why XDR was chosen, like:
 
@@ -62,8 +61,37 @@ The Stellar's guides list some reasons on why XDR was chosen, like:
 
 Nicolas Barry also expands on the subject in the following stack  overflow question where someone asked ["Why did the project settle on XDR for external data serialisation?"](https://stellar.stackexchange.com/a/284/1066). It  mentions similar points, but adds emphasis on the extra security added by using the protocol, specifically as the protocol evolves.
 
+
 ## Basic Block Size
 
+XDR requires each block of data to have a minimum number of bytes. All
+items require a multiple of four bytes (or 32 bits) of data. If the
+bytes needed to contain the data are not a multiple of four, then zero
+bytes are added to the item to make the total byte count a multiple of
+4.
+
+The RFC includes a visual representation of this, which looks like the
+following, where each box (delimited by a plus sign at the 4 corners
+and vertical bars and dashes) depicts a byte.
+
+        +--------+--------+...+--------+--------+...+--------+
+        | byte 0 | byte 1 |...|byte n-1|    0   |...|    0   |   BLOCK
+        +--------+--------+...+--------+--------+...+--------+
+        |<-----------n bytes---------->|<------r bytes------>|
+        |<-----------n+r (where (n+r) mod 4 = 0)>----------->|
+
+
+Give the restriction above, the following message which contains the string `hello world` is not valid since it contains 15 bytes.
+
+```golang
+[0, 0, 0, 11, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
+```
+
+To make it compliant with XDR you'll need to append an extra `0` after the byte `100`, resulting in `16` bytes.
+
+```golang
+[0, 0, 0, 11, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 0]
+```
 
 ## Data types
 
