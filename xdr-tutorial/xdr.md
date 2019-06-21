@@ -6,13 +6,9 @@ the standard while analyzing how the XDR golang library works. Any
 kind of developer can benefit from reading this article, but it will
 be oriented towards Stellar developers. By the end of the article,
 you'll be familiar with `XDR`, the golang `XDR` library and understand
-how `XDR` is used in the Stellar protocol (ecosystem)?.
+how `XDR` is used in the Stellar ecosystem.
 
 ## History
-
-Chances are you have never heard of `XDR` and you might even be
-surprised that there is something different from `JSON` to send
-messages between computers!
 
 While `JSON` is today the predominant data format for sending messages
 around the web, before that, there was `XML` (do not confuse with
@@ -21,7 +17,7 @@ messages between machines.
 
 When you are sending messages, you need a way to describe the
 information you are sending. Without any context, what are you
-supposed to do if you receive the following bytes?
+supposed to do if you receive a message with the following bytes?
 
 ```golang Sequence of bytes in hex format
 bytes := [0x0, 0x0, 0x0, 0xb, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x0]
@@ -30,12 +26,12 @@ bytes := [0x0, 0x0, 0x0, 0xb, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x20, 0x77, 0x6f, 0x
 In the mid 1980s Sun Microsystems came up with a proposal which would
 allow you not only to send data in `bytes` but also describe the shape
 of that data, this format was called External Data Representation
-Standard or `XDR`.
+Standard or `XDR`. [^1]
 
 Following the `XDR` spec, the `bytes` above represent the string
 `hello world`, where the first `4 bytes` tells you the number of
-`bytes` that a string might contain (`11` in this case), and the the
-rest are the UTF-8 bytes representantion of the string. [^1]
+`bytes` the string contains (`11` in this case), and the the
+rest are the UTF-8 `bytes` representantion of the string. [^2]
 
 XDR is used by a variety of systems like Stellar Payment Network, ZFS
 File System and The SpiderMonkey JavaScript engine.
@@ -58,18 +54,44 @@ You can develop applications on top of Stellar without worrying about
 how XDR works, the SDKs includes helpers to help you interact with the
 network and convert data back and forth in XDR.
 
-The page where the the quote above was taken, list some reasons on why XDR was chosen, like:
+The Stellar's guides list some reasons on why XDR was chosen, like:
 
  - It is very compact, so it can be transmitted quickly and stored with minimal disk space.
  - Data encoded in XDR is reliably and predictably stored. Fields are always in the same order, which makes cryptographically signing and verifying XDR messages simple.
  - XDR definitions include rich descriptions of data types and structures, which is not possible in simpler formats like JSON, TOML, or YAML.
 
-Nicolas Barry also expands on the subject in the following stack
- overflow question where someone asked ["Why did the project settle on
- XDR for external data
- serialisation?"](https://stellar.stackexchange.com/a/284/1066). It
- mentions similar points, but adds emphasis on the extra security
- added by using the protocol, specifically as the protocol evolves.
+Nicolas Barry also expands on the subject in the following stack  overflow question where someone asked ["Why did the project settle on XDR for external data serialisation?"](https://stellar.stackexchange.com/a/284/1066). It  mentions similar points, but adds emphasis on the extra security added by using the protocol, specifically as the protocol evolves.
+
+## Basic Block Size
+
+
+## Data types
+
+XDR defines the following data types:
+
+- Integer
+- Unsigned Integer
+- Enumeration
+- Boolean
+- Hyper Integer and Unsigned Hyper Integer
+- Floating-Point
+- Double-Precision Floating-Point
+- Quadruple-Precision Floating-Point
+- Fixed-Length Opaque Data
+- Variable-Length Opaque Data
+- String
+- Fixed-Length Array
+- Variable-Length Array
+- Structure
+- Discriminated Union
+- Void
+
+And the modifiers:
+
+- Constant
+- Typedef
+- Optional-Data
+
 
 ## Representing data with XDR
 
@@ -81,36 +103,6 @@ struct PaymentOp
     int64 amount;          // amount they end up with
 };
 ```
-
-## Assumptions
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in
-reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
-
-## Data types
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in
-reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
-
-
-## Reimplementing go-xdr
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in
-reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
 
 ## Integer
 
@@ -154,4 +146,5 @@ culpa qui officia deserunt mollit anim id est laborum.
 
 ## Footnotes
 
-- [^1] The spec talks about ASCII bytes but current implementations use UTF-8 which has replaced ASCII.
+- [^1] https://tools.ietf.org/html/rfc4506
+- [^2] The spec talks about ASCII bytes but current implementations use UTF-8 which has replaced ASCII.
