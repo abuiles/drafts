@@ -18,7 +18,7 @@ information you are sending. Without any context, what are you
 supposed to do if you receive a message with the following bytes?
 
 ```golang Sequence of bytes represented in decimal
-[0 0 0 11 104 101 108 108 111 32 119 111 114 108 100]
+[0, 0, 0, 11, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
 ```
 
 In the mid 1980s Sun Microsystems came up with a proposal which would
