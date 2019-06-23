@@ -64,7 +64,7 @@ Nicolas Barry also expands on the subject in the following stack  overflow quest
 
 ## Basic Block Size
 
-XDR requires each block of data to have a minimum number of bytes. All
+XDR requires each data block to have a minimum number of bytes. All
 items require a multiple of four bytes (or 32 bits) of data. If the
 bytes needed to contain the data are not a multiple of four, then zero
 bytes are added to the item to make the total byte count a multiple of
@@ -81,7 +81,7 @@ and vertical bars and dashes) depicts a byte.
         |<-----------n+r (where (n+r) mod 4 = 0)>----------->|
 
 
-Give the restriction above, the following message which contains the string `hello world` is not valid since it contains 15 bytes.
+Given the restriction above, the following data block which represents a string is not valid, since it contains 15 bytes.
 
 ```golang
 [0, 0, 0, 11, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
@@ -92,6 +92,8 @@ To make it compliant with XDR you'll need to append an extra `0` after the byte 
 ```golang
 [0, 0, 0, 11, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 0]
 ```
+
+Next, let's talk about data types and start playing with them.
 
 ## Data types
 
@@ -113,13 +115,23 @@ XDR defines the following data types:
 - Structure
 - Discriminated Union
 - Void
-
-And the modifiers:
-
 - Constant
 - Typedef
 - Optional-Data
 
+We shall start by looking at the most basic data types and then
+explore more complex ones like structures and discriminated unions.
+
+## Integer
+
+From the RFC:
+
+   An XDR signed integer is a 32-bit datum that encodes an integer in
+   the range [-2147483648,2147483647].  The integer is represented in
+   two's complement notation.  The most and least significant bytes are
+   0 and 3, respectively.  Integers are declared as follows:
+
+         int identifier;
 
 ## Representing data with XDR
 
