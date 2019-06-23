@@ -275,7 +275,7 @@ encoded data in hex: fffffff6
 decoded data -10
 ```
 
-From now on, you'll use `Marshal` and `Unmarshal` to convert between
+From now on, we'll use `Marshal` and `Unmarshal` to convert between
 `golang` and `XDR` data types.
 
 ## Unsigned Integer
