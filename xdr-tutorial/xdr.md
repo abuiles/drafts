@@ -124,54 +124,159 @@ explore more complex ones like structures and discriminated unions.
 
 ## Integer
 
-From the RFC:
+>An XDR signed integer is a 32-bit datum that encodes an integer in
+>the range [-2147483648,2147483647].  The integer is represented in
+>two's complement notation.  The most and least significant bytes are
+>0 and 3, respectively.
+>
+> In XDR, Integers are declared as follows:
+>
+>         int identifier;
+>
+> https://tools.ietf.org/html/rfc4506#section-4.1
 
-   An XDR signed integer is a 32-bit datum that encodes an integer in
-   the range [-2147483648,2147483647].  The integer is represented in
-   two's complement notation.  The most and least significant bytes are
-   0 and 3, respectively.  Integers are declared as follows:
+As described above, signed integers in XDR follow a 32-bit
+architecture representation. Assuming you have `golang` installed,
+let's play with the `XDR` go library to encode and decode some
+integers, and print their representation hex and decimal.
 
-         int identifier;
+Create a file called `int.go` and then copy the following content:
 
-## Representing data with XDR
+```golang
+// You can run directly from the golang playground https://play.golang.org/p/ArVhlyO8udz
 
-```xdr
-struct PaymentOp
-{
-    AccountID destination; // recipient of the payment
-    Asset asset;           // what they end up with
-    int64 amount;          // amount they end up with
-};
+package main
+
+import (
+	"bytes"
+	"encoding/hex"
+	"fmt"
+	"github.com/nullstyle/go-xdr/xdr3"
+)
+
+func encodeAndDecode(anInteger int32) {
+	fmt.Println("Encoding and decoding:", anInteger)
+
+	// Use Buffer to write bytes
+	var buffer bytes.Buffer
+
+	// The XDR library has a built-in encoder which helps you convert
+	// golang types to XDR types. You can create a new encoder with
+	// the function `NewEncoder` which takes a buffer
+	enc := xdr.NewEncoder(&buffer)
+
+
+	// To encode an integer, you can use the `EncodeInt` which takes an
+	// int32 integer and writes its bytes representation to the
+	// buffer
+	_, err := enc.EncodeInt(anInteger)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("encoded data in decimal:", buffer.Bytes())
+	fmt.Println("encoded data in hex:", hex.EncodeToString(buffer.Bytes()))
+
+	// decode an integer
+
+	// Similar to encoding, you can create a new decoder by using
+	// `NewDecoder` and pass a byte stream, in this example, you are
+	// passing the buffer with an integer in bytes
+	dec := xdr.NewDecoder(bytes.NewReader(buffer.Bytes()))
+
+	// `DecodeInt` reads the content in the buffer passed to
+	// `NewDecoder`, it returns its int32 representation
+	decoded, _, err := dec.DecodeInt()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("decoded data", decoded)
+}
+
+func main() {
+	encodeAndDecode(int32(10))
+	encodeAndDecode(int32(-10))
+}
 ```
 
-## Integer
+Run the program with `go run int.go` and you should get the following output:
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in
-reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
-
-```go
-  func (enc *Encoder) EncodeInt(v int32) (int, error) {
-          var b [4]byte
-          b[0] = byte(v >> 24)
-          b[1] = byte(v >> 16)
-          b[2] = byte(v >> 8)
-          b[3] = byte(v)
-
-          n, err := enc.w.Write(b[:])
-          if err != nil {
-                  msg := fmt.Sprintf(errIOEncode, err.Error(), 4)
-                  err := marshalError("EncodeInt", ErrIO, msg, b[:n], err)
-                  return n, err
-          }
-
-          return n, nil
-  }
+```golang
+Encoding and decoding: 10
+encoded data in decimal: [0 0 0 10]
+encoded data in hex: 0000000a
+decoded data 10
+Encoding and decoding: -10
+encoded data in decimal: [255 255 255 246]
+encoded data in hex: fffffff6
+decoded data -10
 ```
+
+In the example above, you created a buffer, a decoder/encoder and then
+called the method to handle the data type which you were marshalling,
+`enc.EncodeInt` and `enc.DecodeInt`. There is an easier way to do the
+same thing using the helper methods `xdr.Marshal` and
+`xdr.Unmarshal`. The code above could be rewritten as you are about to
+see. To keep the code short, it doesn't include any error handling.
+
+```golang
+// You can run directly from the golang playground https://play.golang.org/p/OoVTu_li7LO
+
+package main
+
+import (
+	"bytes"
+	"encoding/hex"
+	"fmt"
+	"github.com/nullstyle/go-xdr/xdr3"
+)
+
+func encodeAndDecode(anInteger int32) {
+	fmt.Println("Encoding and decoding:", anInteger)
+	var buffer bytes.Buffer
+
+	// Pass a buffer and a value, `Marshal` will use reflection to
+	// identify the right encoder.
+	xdr.Marshal(&buffer, anInteger)
+
+	fmt.Println("encoded data in decimal:", buffer.Bytes())
+	fmt.Println("encoded data in hex:", hex.EncodeToString(buffer.Bytes()))
+
+	var decoded int32
+
+	// Like `Marshal`, `Unmarshal` will use reflection to
+	// identify the right decoder.
+	xdr.Unmarshal(bytes.NewReader(buffer.Bytes()), &decoded)
+
+	fmt.Println("decoded data", decoded)
+}
+
+func main() {
+	encodeAndDecode(int32(10))
+	encodeAndDecode(int32(-10))
+}
+```
+
+Running the code above, will yield the same result as the original implementation:
+
+```golang
+Encoding and decoding: 10
+encoded data in decimal: [0 0 0 10]
+encoded data in hex: 0000000a
+decoded data 10
+Encoding and decoding: -10
+encoded data in decimal: [255 255 255 246]
+encoded data in hex: fffffff6
+decoded data -10
+```
+
+From now on, you'll use `Marshal` and `Unmarshal` to convert between
+`golang` and `XDR` data types.
 
 ## Unsigned Integer
 
