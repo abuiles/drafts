@@ -327,6 +327,17 @@ func main() {
 }
 ```
 
+## Enumeration
+
+>Enumerations have the same representation as signed integers.
+>Enumerations are handy for describing subsets of the integers.
+>Enumerated data is declared as follows:
+>
+>      enum { name-identifier = constant, ... } identifier;
+>
+>https://tools.ietf.org/html/rfc4506#section-4.3
+
+
 
 ## Footnotes
 
