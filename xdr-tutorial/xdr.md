@@ -465,6 +465,17 @@ used to stored each type:
 
 This is supported by the standard but not implemented in the golang library.
 
+## Fixed-Length Opaque Data
+## Variable-Length Opaque Data
+## String
+## Fixed-Length Array
+## Variable-Length Array
+## Structure
+## Discriminated Union
+## Void
+## Constant
+## Typedef
+## Optional-Data
 
 ## Footnotes
 
