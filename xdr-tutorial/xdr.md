@@ -4,7 +4,7 @@ This article offers an introduction to XDR, which is a standard for
 describing and encoding data. Any kind of developer can benefit from
 reading this article, but it will be oriented towards Stellar
 developers. By the end of the article, you'll be familiar with XDR,
-the golang XDR library and understand how XDR is used in the
+the `golang` XDR library and understand how XDR is used in the
 Stellar ecosystem.
 
 ## History
@@ -38,7 +38,7 @@ XDR can be compared to Google's [protocol buffers](https://developers.google.com
 
 In the following sections you'll learn about the relationship between
 XDR and Stellar, the basic data types and then explore each data type
-while playing with the golang library.
+while playing with the `golang` library.
 
 ## Stellar and XDR
 
@@ -349,7 +349,7 @@ enum OperationType
 };
 ```
 
-The following implements the `enum` above in golang, notice how we use
+The following implements the `enum` above in `golang`, notice how we use
 the interface `Enum` define in the `XDR` library to force validation
 at encode and decode time.
 
@@ -442,6 +442,28 @@ Encoding and decoding: 3
 xdr:encode: invalid enum - value: '3'
 ```
 
+
+## Boolean, Hyper Integer and Unsigned Hyper Integer, Floating-Point, Double-Precision Floating-Point
+
+By now you must see a pattern on how to encode/decode some data types
+between XDR and `golang`, we won't include examples for the ones listed
+above since it is pretty much the same code as the previous
+examples. We'll list the mapping type in go and the number of bytes
+used to stored each type:
+
+- Boolean:  `bool` - 32-bits (4-bytes).
+- Hyper Integer and Unsigned Hyper Integer: `int64` and `uint64` - 64-bits (8-bytes).
+- Floating-Point: `float32` - 32-bits (4-bytes).
+- Double-Precision Floating-Point: `float64` - 64-bits (8-bytes).
+
+##  Quadruple-Precision Floating-Point
+
+>The standard defines the encoding for the quadruple-precision
+>floating-point data type "quadruple" (128 bits or 16 bytes).
+>
+>https://tools.ietf.org/html/rfc4506#section-4.8
+
+This is supported by the standard but not implemented in the golang library.
 
 
 ## Footnotes
