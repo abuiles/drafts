@@ -425,6 +425,23 @@ func main() {
 }
 ```
 
+Running the code above will produce:
+
+```golang
+Encoding and decoding: 0
+encoded data in decimal: [0 0 0 0]
+encoded data in hex: 00000000
+decoded data 0
+Encoding and decoding: 1
+encoded data in decimal: [0 0 0 1]
+encoded data in hex: 00000001
+decoded data 1
+Encoding and decoding: 2
+xdr:encode: invalid enum - value: '2'
+Encoding and decoding: 3
+xdr:encode: invalid enum - value: '3'
+```
+
 
 
 ## Footnotes
